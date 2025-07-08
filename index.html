@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: var(--bg-color, #fff);
+      color: var(--text-color, #000);
+      transition: background-color 0.3s, color 0.3s;
+    }
+    #darkToggle:checked ~ .page-content {
+      --bg-color: #1e1e1e;
+      --text-color: #f1f1f1;
+    }
+    .subcategories {
+      display: none;
+      margin-top: 10px;
+    }
+    .category-btn.active + .subcategories {
+      display: block;
+    }
+    .signup-form {
+      display: none;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-top: 20px;
+      background-color: #f9f9f9;
+    }
+    #signupToggle:checked ~ .signup-form {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <!-- 다크모드 토글 -->
+  <input type="checkbox" id="darkToggle" hidden>
+  <div class="page-content container mt-4">
+
+    <!-- 현재 날짜 및 시간 -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div id="datetime" class="text-muted small"></div>
+      <label for="darkToggle" class="btn btn-outline-dark btn-sm">🌙 다크모드</label>
+    </div>
+
+    <!-- 카테고리 클릭 시 하위 메뉴 -->
+    <div class="mb-3">
+      <button class="btn btn-secondary category-btn">카테고리</button>
+      <div class="subcategories">
+        <span class="badge bg-light text-dark">상의</span>
+        <span class="badge bg-light text-dark">하의</span>
+        <span class="badge bg-light text-dark">신발</span>
+        <span class="badge bg-light text-dark">패션잡화</span>
+      </div>
+    </div>
+
+    <!-- 검색 필터 -->
+    <form class="row row-cols-lg-auto g-3 align-items-center mb-4">
+      <div class="col-12">
+        <select class="form-select" name="category_data_table">
+          <option selected>카테고리 선택</option>
+          <option value="상의">상의</option>
+          <option value="하의">하의</option>
+          <option value="신발">신발</option>
+          <option value="패션잡화">패션잡화</option>
+        </select>
+      </div>
+      <div class="col-3">
+        <input type="text" class="form-control" placeholder="제품명을 입력해주세요">
+      </div>
+      <div class="col-3">
+        <select class="form-select">
+          <option selected>성별 선택</option>
+          <option value="남성">남성</option>
+          <option value="여성">여성</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-primary">조회</button>
+      </div>
+    </form>
+
+    <!-- 테이블 -->
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>카테고리</th>
+          <th>브랜드</th>
+          <th>상품명</th>
+          <th>가격</th>
+        </tr>
+      </thead>
+      <tbody id="product_data_Table">
+        <!-- JS로 삽입 -->
+      </tbody>
+    </table>
+
+    <!-- 페이지네이션 -->
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item disabled"><a class="page-link" href="#">이전</a></li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">다음</a></li>
+      </ul>
+    </nav>
+
+    <!-- 회원가입 버튼 및 폼 -->
+    <div class="mt-4">
+      <input type="checkbox" id="signupToggle" hidden>
+      <label for="signupToggle" class="btn btn-success">회원가입</label>
+
+      <div class="signup-form">
+        <h5>회원가입</h5>
+        <input type="text" class="form-control mb-2" placeholder="이름">
+        <input type="email" class="form-control mb-2" placeholder="이메일">
+        <input type="password" class="form-control mb-2" placeholder="비밀번호">
+        <select class="form-select mb-3">
+          <option>성별 선택</option>
+          <option>남성</option>
+          <option>여성</option>
+          <option>기타</option>
+        </select>
+        <button class="btn btn-primary w-100">가입하기</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 실시간 날짜 및 시간
+    function updateDateTime() {
+      const now = new Date();
+      document.getElementById('datetime').textContent =
+        '현재 시각: ' + now.toLocaleString();
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    // 카테고리 버튼 클릭 시 하위 메뉴 토글
+    document.querySelector('.category-btn').addEventListener('click', function () {
+      this.classList.toggle('active');
+    });
+
+    // 제품 데이터
+    const product_data = [
+      { category: "상의", brand: 'Supreme', product: '슈프림 박스로고 후드티', price: '390,000' },
+      { category: "하의", brand: 'DIESEL', product: '디젤 트랙 팬츠', price: '188,000' },
+      { category: "신발", brand: 'Nike', product: '에어포스 1', price: '137,000' },
+      { category: "패션잡화", brand: 'Music&Goods', product: '빵빵이 키링', price: '29,000' },
+    ];
+
+    const tableBody = document.getElementById('product_data_Table');
+    product_data.forEach(item => {
+      const row = tableBody.insertRow();
+      row.insertCell(0).textContent = item.category;
+      row.insertCell(1).textContent = item.brand;
+      row.insertCell(2).textContent = item.product;
+      row.insertCell(3).textContent = item.price;
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
